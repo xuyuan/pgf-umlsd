@@ -13,6 +13,7 @@
 %      of instance (such as no colon)
 %      - the user can redefine the `inststyle'
 %      - new option: switch underlining of the instance text
+%      - new option: switch rounded corners
 % v0.1 2008/01/25 first release at http://www.fauskes.net/pgftikzexamples/
 
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
@@ -25,6 +26,11 @@ Sequence Diagrams.]
 \DeclareOption{underline}{\pgfumlsdunderlinetrue}
 \DeclareOption{underline=true}{\pgfumlsdunderlinetrue}
 \DeclareOption{underline=false}{\pgfumlsdunderlinefalse}
+% ? the instance box with rounded corners ?
+\newif\ifpgfumlsdroundedcorners\pgfumlsdroundedcornersfalse
+\DeclareOption{roundedcorners}{\pgfumlsdroundedcornerstrue}
+\DeclareOption{roundedcorners=true}{\pgfumlsdroundedcornerstrue}
+\DeclareOption{roundedcorners=false}{\pgfumlsdroundedcornersfalse}
 \ProcessOptions
 
 % declare layers
@@ -191,6 +197,9 @@ Sequence Diagrams.]
     \tikzstyle{inststyle}=[rectangle, draw, anchor=west, minimum
     height=0.8cm, minimum width=1.6cm, fill=white, 
     drop shadow={opacity=1,fill=black}]
+    \ifpgfumlsdroundedcorners
+    \tikzstyle{inststyle}+=[rounded corners=3mm]
+    \fi
     \tikzstyle{loopstyle}=[anchor=north west]
     \global\def\unitfactor{0.6}
     \global\def\threadbias{center}
