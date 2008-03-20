@@ -5,18 +5,19 @@
 \documentclass{article}
 
 \usepackage{tikz}
-\usepackage{pgf-umlsd}
-\usepgflibrary{arrows} % for pgf-umlsd
+\usepackage[underline=false]{pgf-umlsd}
+\usetikzlibrary{arrows,shadows} % for pgf-umlsd
 
 \begin{document}
 
 \begin{figure}
   \centering
   \begin{sequencediagram}
-    \newthread{ss}{}{SimulationServer}
-    \newinst{ctr}{}{SimControlNode}
-    \newinst{ps}{}{PhysicsServer}
-    \newinst[1]{sense}{}{SenseServer}
+    \tikzstyle{inststyle}+=[rounded corners=3mm]
+    \newthread{ss}{:SimulationServer}
+    \newinst{ctr}{:SimControlNode}
+    \newinst{ps}{:PhysicsServer}
+    \newinst[1]{sense}{:SenseServer}
     
     \begin{call}{ss}{Initialize()}{sense}{}
     \end{call}
@@ -46,10 +47,10 @@
 \begin{figure}
   \centering
   \begin{sequencediagram}
-    \newthread{ss}{}{SimulationServer}
-    \newinst{ps}{}{PhysicsServer}
-    \newinst[1]{sense}{}{SenseServer}
-    \newthread[red]{ctr}{}{SimControlNode}
+    \newthread{ss}{:SimulationServer}
+    \newinst{ps}{:PhysicsServer}
+    \newinst[1]{sense}{:SenseServer}
+    \newthread[red]{ctr}{:SimControlNode}
     
     \begin{sdloop}[green!20]{Run Loop}
       \mess{ctr}{StartCycle}{ss}

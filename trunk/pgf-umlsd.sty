@@ -4,8 +4,28 @@
 % Some macros for UML Sequence Diagrams.
 %
 % Author: Xu Yuan <xuyuan.cn@gmail.com>, Southeast University, China
-% Version: 0.1
-% Date: 2008/01/25
+%
+% History:
+% v0.2 2008/03/20 create project at http://pgf-umlsd.googlecode.com/
+%      - use `shadows' library
+%      Thanks for Dr. Ludger Humbert's <humbert@uni-wuppertal.de> feedback!
+%      - reduce the parameter numbers, the user can write the content
+%      of instance (such as no colon)
+%      - the user can redefine the `inststyle'
+%      - new option: switch underlining of the instance text
+% v0.1 2008/01/25 first release at http://www.fauskes.net/pgftikzexamples/
+
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{pgf-umlsd}[2008/03/20 v0.2 Some LaTeX macros for UML
+Sequence Diagrams.]
+
+% Options
+% ? the instance name under line ?
+\newif\ifpgfumlsdunderline\pgfumlsdunderlinetrue
+\DeclareOption{underline}{\pgfumlsdunderlinetrue}
+\DeclareOption{underline=true}{\pgfumlsdunderlinetrue}
+\DeclareOption{underline=false}{\pgfumlsdunderlinefalse}
+\ProcessOptions
 
 % declare layers
 \pgfdeclarelayer{background}
@@ -20,27 +40,27 @@
 \newcounter{callevel}
 \newcounter{looplevel}
 
-% new a instance
+% new an instance
 % Example:
-% \newinst[edge distance]{var}{name}{class}
-\newcommand{\newinst}[4][0.2]{
+% \newinst[edge distance]{var}{name:class}
+\newcommand{\newinst}[3][0.2]{
   \stepcounter{instnum}
   \path (inst\thepreinst.east)+(#1,0) node[inststyle] (inst\theinstnum)
-  {\underline{#3:#4}};
-  \begin{pgfonlayer}{background} % shadow
-    \node[inststyle, below right of=inst\theinstnum, node
-    distance=0.1cm, fill=black] {\underline{#3:#4}};
-  \end{pgfonlayer}
+  {\ifpgfumlsdunderline
+    \underline{#3}
+  \else
+  #3
+  \fi};
   \path (inst\theinstnum)+(0,-0.5*\unitfactor) node (#2) {};
   \tikzstyle{instcolor#2}=[]
   \stepcounter{preinst}
 }
 
-% new a instance
+% new an instance thread
 % Example:
 % \newinst[color]{var}{name}{class}
-\newcommand{\newthread}[4][gray!30]{
-  \newinst{#2}{#3}{#4}
+\newcommand{\newthread}[3][gray!30]{
+  \newinst{#2}{#3}
   \stepcounter{threadnum}
   \node[below of=inst\theinstnum,node distance=0.8cm] (thread\thethreadnum) {};
   \tikzstyle{threadcolor\thethreadnum}=[fill=#1]
@@ -169,7 +189,8 @@
     \setlength{\unitlength}{1cm}
     \tikzstyle{sequence}=[coordinate]
     \tikzstyle{inststyle}=[rectangle, draw, anchor=west, minimum
-    height=0.8cm, minimum width=1.6cm, fill=white]
+    height=0.8cm, minimum width=1.6cm, fill=white, 
+    drop shadow={opacity=1,fill=black}]
     \tikzstyle{loopstyle}=[anchor=north west]
     \global\def\unitfactor{0.6}
     \global\def\threadbias{center}
