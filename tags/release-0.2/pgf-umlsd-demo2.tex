@@ -1,0 +1,101 @@
+% Demonstration of pgf-umlsd.sty, a convenient set of macros for drawing
+% UML sequence diagrams. Written by Xu Yuan <xuyuan.cn@gmail.com> from
+% Southeast University, China.
+
+% The used style-file is part of pgf-umlsd-0.2.tar.gz
+% you may get it at
+% http://code.google.com/p/pgf-umlsd/
+
+
+\documentclass{article}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,shadows} % for pgf-umlsd
+
+\usepackage{soul} % hereby we are able to \hl == highlight some strings, or to \ul underline specials
+
+%\usepackage[underline=true,rounded corners=false]{pgf-umlsd} % changed to following parameter-values:
+\usepackage[underline=false,rounded corners=true]{pgf-umlsd}
+
+\begin{document}
+
+\begin{figure}
+  \centering
+  \begin{sequencediagram}
+  \tikzstyle{inststyle}+=[rounded corners=3.2mm, bottom color=cyan] %% hier werden weitere Optionen angegeben
+    \newthread{ss}{simulationServer}
+    \newinst{ctr}{simControlNode}
+    \newinst{ps}{physicsServer}
+    \newinst[1]{sense}{senseServer}
+    
+    \begin{call}{ss}{Initialize()}{sense}{}
+    \end{call}
+    \begin{sdloop}{Run Loop}
+      \begin{call}{ss}{StartCycle()}{ctr}{}
+        \begin{call}{ctr}{ActAgent()}{sense}{}
+        \end{call}
+      \end{call}
+      \begin{call}{ss}{Update()}{ps}{}
+        \begin{call}{ps}{PrePhysicsUpdate()}{sense}{state}
+        \end{call}
+        \begin{callself}{ps}{PhysicsUpdate()}{}
+        \end{callself}
+        \begin{call}{ps}{PostPhysicsUpdate()}{sense}{}
+        \end{call}
+      \end{call}
+      \begin{call}{ss}{EndCycle()}{ctr}{}
+        \begin{call}{ctr}{SenseAgent()}{sense}{}
+        \end{call}
+      \end{call}
+    \end{sdloop}
+  \end{sequencediagram}
+
+  \caption{UML sequence diagram demo. The used style-file is part of pgf-umlsd-0.2.tar.gz
+Get it at http://code.google.com/p/pgf-umlsd/}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{sequencediagram}
+  \tikzstyle{inststyle}+=[rounded corners=0mm, bottom color=yellow] %% with rounded corners=0mm we get the standard behavior again
+    \newthread{ss}{\ul{:SimulationServer}} 			    %% to show, that one is able, to underline special elements
+    \newinst{ps}{:PhysicsServer}
+    \newinst[1]{sense}{\ul{:SenseServer}} 			    %% to show, that one is able, to underline special elements
+    \newthread[red]{ctr}{:SimControlNode}
+    
+    \begin{sdloop}[green!20]{Run Loop}
+      \mess{ctr}{StartCycle}{ss}
+      \begin{call}{ss}{Update()}{ps}{}
+        \prelevel
+        \begin{callself}{ctr}{SenseAgent()}{}
+          \begin{call}[3]{ctr}{Read}{sense}{}
+          \end{call}
+        \end{callself}
+        \prelevel\prelevel\prelevel\prelevel
+        \setthreadbias{west}
+        \begin{call}{ps}{PrePhysicsUpdate()}{sense}{}
+        \end{call}
+        \setthreadbias{center}
+        \begin{callself}{ps}{Update()}{}
+        \end{callself}
+        \begin{call}{ps}{PostPhysicsUpdate()}{sense}{}
+        \end{call}
+      \end{call}
+      \mess{ss}{EndCycle}{ctr}
+      \begin{callself}{ctr}{ActAgent()}{}
+        \begin{call}{ctr}{Write}{sense}{}
+        \end{call}
+      \end{callself}
+    \end{sdloop}
+
+  \end{sequencediagram}
+  \caption{Example of a sequence with parallel activities.The used style-file is part of pgf-umlsd-0.2.tar.gz --
+get it at http://code.google.com/p/pgf-umlsd/}
+\end{figure}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: Tex-PDF
+%%% TeX-master: t
+%%% End: 

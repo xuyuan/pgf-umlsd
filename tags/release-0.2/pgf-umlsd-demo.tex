@@ -1,0 +1,88 @@
+% Demonstration of pgf-umlsd.sty, a convenient set of macros for drawing
+% UML sequence diagrams. Written by Xu Yuan <xuyuan.cn@gmail.com> from
+% Southeast University, China.
+
+\documentclass{article}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,shadows} % for pgf-umlsd
+\usepackage[underline=true,rounded corners=false]{pgf-umlsd}
+
+\begin{document}
+
+\begin{figure}
+  \centering
+  \begin{sequencediagram}
+    \newthread{ss}{:SimulationServer}
+    \newinst{ctr}{:SimControlNode}
+    \newinst{ps}{:PhysicsServer}
+    \newinst[1]{sense}{:SenseServer}
+    
+    \begin{call}{ss}{Initialize()}{sense}{}
+    \end{call}
+    \begin{sdloop}{Run Loop}
+      \begin{call}{ss}{StartCycle()}{ctr}{}
+        \begin{call}{ctr}{ActAgent()}{sense}{}
+        \end{call}
+      \end{call}
+      \begin{call}{ss}{Update()}{ps}{}
+        \begin{call}{ps}{PrePhysicsUpdate()}{sense}{state}
+        \end{call}
+        \begin{callself}{ps}{PhysicsUpdate()}{}
+        \end{callself}
+        \begin{call}{ps}{PostPhysicsUpdate()}{sense}{}
+        \end{call}
+      \end{call}
+      \begin{call}{ss}{EndCycle()}{ctr}{}
+        \begin{call}{ctr}{SenseAgent()}{sense}{}
+        \end{call}
+      \end{call}
+    \end{sdloop}
+  \end{sequencediagram}
+
+  \caption{UML sequence diagram demo.}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{sequencediagram}
+    \newthread{ss}{:SimulationServer}
+    \newinst{ps}{:PhysicsServer}
+    \newinst[1]{sense}{:SenseServer}
+    \newthread[red]{ctr}{:SimControlNode}
+    
+    \begin{sdloop}[green!20]{Run Loop}
+      \mess{ctr}{StartCycle}{ss}
+      \begin{call}{ss}{Update()}{ps}{}
+        \prelevel
+        \begin{callself}{ctr}{SenseAgent()}{}
+          \begin{call}[3]{ctr}{Read}{sense}{}
+          \end{call}
+        \end{callself}
+        \prelevel\prelevel\prelevel\prelevel
+        \setthreadbias{west}
+        \begin{call}{ps}{PrePhysicsUpdate()}{sense}{}
+        \end{call}
+        \setthreadbias{center}
+        \begin{callself}{ps}{Update()}{}
+        \end{callself}
+        \begin{call}{ps}{PostPhysicsUpdate()}{sense}{}
+        \end{call}
+      \end{call}
+      \mess{ss}{EndCycle}{ctr}
+      \begin{callself}{ctr}{ActAgent()}{}
+        \begin{call}{ctr}{Write}{sense}{}
+        \end{call}
+      \end{callself}
+    \end{sdloop}
+
+  \end{sequencediagram}
+  \caption{Example of a sequence with parallel activities.}
+\end{figure}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: Tex-PDF
+%%% TeX-master: t
+%%% End: 
