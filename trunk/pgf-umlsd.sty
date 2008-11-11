@@ -2,10 +2,13 @@
 % Start of pgf-umlsd.sty
 %
 % Some macros for UML Sequence Diagrams.
-%
+% Home page of project: http://pgf-umlsd.googlecode.com/
 % Author: Xu Yuan <xuyuan.cn@gmail.com>, Southeast University, China
 %
 % History:
+% v0.3 2008/11/10 in Berlin, fix for the PGF cvs version:
+%      - the list items in \foreach are not evaluated by default now,
+%      the `evaluate' opinion should be used
 % v0.2 2008/03/20 create project at http://pgf-umlsd.googlecode.com/
 %      - use `shadows' library
 %      Thanks for Dr. Ludger Humbert's <humbert@uni-wuppertal.de> feedback!
@@ -157,7 +160,7 @@ Sequence Diagrams.]
 
 % In the situation of multi-threads, some events happen at the same
 % time. Currently, we have to adjust the level(time) of events
-% manually. This function makes the call eariler.
+% manually. This function makes the call earlier.
 \newcommand{\prelevel}{\addtocounter{seqlevel}{-1}}
 
 % a loop box with caption
@@ -175,7 +178,7 @@ Sequence Diagrams.]
   \path (current bounding box.east)+(0.2,0) node (boxeast) {}
   (current bounding box.west |- {loopbeg\thelooplevel}) + (-0.2,0)
   node (nw) {};
-  \draw (nw) rectangle (boxeast |- loopend); %se
+  \draw (nw) rectangle (boxeast |- loopend);
 
   % title
   \node[loopstyle] (looptitle) at (nw) {\loopname\thelooplevel};
@@ -216,10 +219,10 @@ Sequence Diagrams.]
 }
 {
   \begin{pgfonlayer}{background}
-    \foreach \t in {1,...,\theinstnum}{
+    \foreach \t [evaluate=\t] in {1,...,\theinstnum}{
       \draw[dotted] (inst\t) -- ++(0,-\theseqlevel*\unitfactor-2.2*\unitfactor);
     }
-    \foreach \t in {1,...,\thethreadnum}{
+    \foreach \t [evaluate=\t] in {1,...,\thethreadnum}{
       \path (thread\t)+(0,-\theseqlevel*\unitfactor-0.1*\unitfactor) node (threadend) {};
       \tikzstyle{threadstyle}+=[threadcolor\t]
       \drawthread{thread\t}{threadend}

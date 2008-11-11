@@ -1,6 +1,9 @@
 % Demonstration of pgf-umlsd.sty, a convenient set of macros for drawing
 % UML sequence diagrams. Written by Xu Yuan <xuyuan.cn@gmail.com> from
 % Southeast University, China.
+% The used style-file is part of pgf-umlsd.sty
+% you may get it at
+% http://code.google.com/p/pgf-umlsd/
 
 \documentclass{article}
 
@@ -39,14 +42,16 @@
       \end{call}
     \end{sdloop}
   \end{sequencediagram}
-
-  \caption{UML sequence diagram demo.}
+  \caption{UML sequence diagram demo. The used style-file is 
+    \texttt{pgf-umlsd.sty}, you may get it at
+    http://code.google.com/p/pgf-umlsd/}
 \end{figure}
 
 \begin{figure}
   \centering
   \begin{sequencediagram}
-    \newthread{ss}{:SimulationServer}
+    \tikzstyle{inststyle}+=[bottom color=yellow] % custom the style
+    \newthread[blue]{ss}{:SimulationServer}
     \newinst{ps}{:PhysicsServer}
     \newinst[1]{sense}{:SenseServer}
     \newthread[red]{ctr}{:SimControlNode}
@@ -77,7 +82,9 @@
     \end{sdloop}
 
   \end{sequencediagram}
-  \caption{Example of a sequence with parallel activities.}
+  \caption{Example of a sequence with parallel activities and the
+    customed style. The used style-file is \texttt{pgf-umlsd.sty}, you
+    may get it at http://code.google.com/p/pgf-umlsd/}
 \end{figure}
 
 \end{document}
