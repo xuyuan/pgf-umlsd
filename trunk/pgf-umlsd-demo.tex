@@ -31,8 +31,10 @@
       \begin{call}{ss}{Update()}{ps}{}
         \begin{call}{ps}{PrePhysicsUpdate()}{sense}{state}
         \end{call}
-        \begin{callself}{ps}{PhysicsUpdate()}{}
-        \end{callself}
+        \begin{sdloop}{Physics Loop}
+          \begin{callself}{ps}{PhysicsUpdate()}{}
+          \end{callself}
+        \end{sdloop}
         \begin{call}{ps}{PostPhysicsUpdate()}{sense}{}
         \end{call}
       \end{call}

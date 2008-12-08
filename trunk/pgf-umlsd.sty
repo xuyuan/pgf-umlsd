@@ -169,12 +169,13 @@ Sequence Diagrams.]
 \newenvironment{sdloop}[2][white]{
   \stepcounter{seqlevel}
   \stepcounter{looplevel} % push
-  \coordinate (loopbeg\thelooplevel) at (0,-\theseqlevel*\unitfactor-0.5*\unitfactor);
+  \coordinate (loopbeg\thelooplevel) at (0,-\theseqlevel*\unitfactor-\unitfactor);
+  \stepcounter{seqlevel}
   \def\loopcolor\thelooplevel{#1}
   \def\loopname\thelooplevel{#2}
   \begin{pgfinterruptboundingbox}
 }{
-  \coordinate (loopend) at (0,-\theseqlevel*\unitfactor-1.4*\unitfactor);
+  \coordinate (loopend) at (0,-\theseqlevel*\unitfactor-2*\unitfactor);
   \path (current bounding box.east)+(0.2,0) node (boxeast) {}
   (current bounding box.west |- {loopbeg\thelooplevel}) + (-0.2,0)
   node (nw) {};
@@ -190,6 +191,7 @@ Sequence Diagrams.]
 
   \end{pgfinterruptboundingbox}
   \addtocounter{looplevel}{-1} % pop
+  \stepcounter{seqlevel}
 }
 
 % the environment of sequence diagram
