@@ -20,6 +20,8 @@
 %      - new option: switch underlining of the instance text
 %      - new option: switch rounded corners
 % v0.1 2008/01/25 first release at http://www.fauskes.net/pgftikzexamples/
+%
+% Modified by Nobel Huang <nobel1984@gmail.com>, Southeast University, China
 
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
 \ProvidesPackage{pgf-umlsd}[2008/03/20 v0.2 Some LaTeX macros for UML
@@ -50,6 +52,7 @@ Sequence Diagrams.]
 \newcounter{seqlevel} % level
 \newcounter{callevel}
 \newcounter{looplevel}
+\newcounter{framelevel}
 
 % new an instance
 % Example:
@@ -97,7 +100,7 @@ Sequence Diagrams.]
   (#4.\threadbias)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (ct\thecallevel) {};
   
   \draw[->,>=triangle 60] ({cf\thecallevel}) -- (ct\thecallevel)
-  node[midway, above] {\small #3};
+  node[midway, above] {#3};
   \def\l\thecallevel{#1}
   \def\f\thecallevel{#2}
   \def\t\thecallevel{#4}
@@ -110,24 +113,26 @@ Sequence Diagrams.]
   (\f\thecallevel)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (rf\thecallevel) {}
   (\t\thecallevel.\threadbias)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (rt\thecallevel) {};
   \draw[dashed,->,>=angle 60] ({rt\thecallevel}) -- (rf\thecallevel)
-  node[midway, above]{\small \returnvalue};
+  node[midway, above]{\returnvalue};
   \drawthread{ct\thecallevel}{rt\thecallevel}
   \addtocounter{callevel}{-1} % pop
 }
 
 % a function do not need call others
 % Example:
-% \begin{callself}[height]{caller}{function}{return}
+% \begin{callself}[height]{caller}{function}{return}{var}
 % \end{callself}
-\newenvironment{callself}[4][1]{
+\newenvironment{callself}[5][1]{
   \stepcounter{seqlevel}
   \stepcounter{callevel} % push
   \path
   (#2)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (sc\thecallevel) {}
   ({sc\thecallevel}.east)+(0,-0.33*\unitfactor) node (scb\thecallevel) {};
+  \path ({#2}.east)+(0,0) node (#5) {};
+  \tikzstyle{instcolor#5}=[instcolor#2]
 
   \draw[->,>=triangle 60] ({sc\thecallevel}.east) -- ++(0.8,0)
-  node[near start, above right] {\small #3} -- ++(0,-0.33*\unitfactor)
+  node[near start, above right] {#3} -- ++(0,-0.33*\unitfactor)
   -- (scb\thecallevel); 
   \def\l\thecallevel{#1}
   \def\f\thecallevel{#2}
@@ -139,7 +144,7 @@ Sequence Diagrams.]
   (sct\thecallevel) {};
 
   \draw[dashed,->,>=angle 60] ({sct\thecallevel}.east) node
-  (sce\thecallevel) {} -- ++(0.8,0) -- node[midway, right]{\small \returnvalue} ++(0,-0.33*\unitfactor) -- ++(-0.8,0);
+  (sce\thecallevel) {} -- ++(0.8,0) -- node[midway, right]{\returnvalue} ++(0,-0.33*\unitfactor) -- ++(-0.8,0);
   \drawthread{scb\thecallevel}{sce\thecallevel}
   \addtocounter{callevel}{-1} % pop
 }
@@ -152,7 +157,30 @@ Sequence Diagrams.]
   \path
   (#1)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (messbeg) {}
   (#3)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (messend) {};
-  \draw[->,>=angle 60] (messbeg) -- (messend) node[midway, above] {\small #2};
+  \draw[->,>=angle 60] (messbeg) -- (messend) node[midway, above] {#2};
+}
+
+\newenvironment{messcall}[4][1]{
+  \stepcounter{seqlevel}
+  \stepcounter{callevel} % push
+  \path
+  (#2)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (cf\thecallevel) {}
+  (#4.\threadbias)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (ct\thecallevel) {};
+  
+  \draw[->,>=angle 60] ({cf\thecallevel}) -- (ct\thecallevel)
+  node[midway, above] {#3};
+  \def\l\thecallevel{#1}
+  \def\f\thecallevel{#2}
+  \def\t\thecallevel{#4}
+  \tikzstyle{threadstyle}+=[instcolor#2]
+}
+{
+  \addtocounter{seqlevel}{\l\thecallevel}
+  \path
+  (\f\thecallevel)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (rf\thecallevel) {}
+  (\t\thecallevel.\threadbias)+(0,-\theseqlevel*\unitfactor-0.3*\unitfactor) node (rt\thecallevel) {};
+  \drawthread{ct\thecallevel}{rt\thecallevel}
+  \addtocounter{callevel}{-1} % pop
 }
 
 % In the situation of multi-threads, some objects are called at the
@@ -181,6 +209,7 @@ Sequence Diagrams.]
   \path (current bounding box.east)+(0.2,0) node (boxeast) {}
   (current bounding box.west |- {loopbeg\thelooplevel}) + (-0.2,0)
   node (nw) {};
+  \path (boxeast |- loopend) node (se) {};
   \draw (nw) rectangle (boxeast |- loopend);
 
   % title
@@ -192,7 +221,47 @@ Sequence Diagrams.]
   \node[loopstyle] (looptitle) at (nw) {\loopname\thelooplevel};
 
   \end{pgfinterruptboundingbox}
+
+  \node[dot] (fnw) at (nw) {};
+  \node[dot] (fse) at (se) {};
+
   \addtocounter{looplevel}{-1} % pop
+  \stepcounter{seqlevel}
+}
+
+\newenvironment{sdframe}[3][white]{
+  \stepcounter{seqlevel}
+  \stepcounter{framelevel}
+  \coordinate (framebeg\theframelevel) at (0,-\theseqlevel*\unitfactor-\unitfactor);
+  \stepcounter{seqlevel}
+  \def\framecolor\theframelevel{#1}
+  \def\framename\theframelevel{#2}
+  \def\framecons\theframelevel{#3}
+  \begin{pgfinterruptboundingbox}
+}{
+  \coordinate (frameend) at (0,-\theseqlevel*\unitfactor-2*\unitfactor);
+  \path (current bounding box.east)+(0.2,0) node (boxeast) {}
+  (current bounding box.west |- {framebeg\theframelevel}) + (-0.2,0)
+  node (nw) {};
+  \path (boxeast |- frameend) node (se) {};
+  \draw (nw) rectangle (se);
+
+  % title
+  \node[framestyle] (frametitle) at (nw) {\framename\theframelevel};
+  \path (frametitle.south east) + (0,0.2) node (set) {}
+  (frametitle.south east) + (-0.2,0) node (seb) {};
+  \path (frametitle.north east) + (0.2,0) node (cons) {};
+  \draw[fill=\framecolor\theframelevel] (frametitle.north west) -- (frametitle.north east) --
+  (set.center) -- (seb.center) -- (frametitle.south west) -- cycle;
+  \node[framestyle] (frametitle) at (nw) {\framename\theframelevel};
+  \node[frameconsstyle] (framecons) at (cons) {[\framecons\theframelevel]};
+
+  \end{pgfinterruptboundingbox}
+
+  \node[dot] (fnw) at (nw) {};
+  \node[dot] (fse) at (se) {};
+
+  \addtocounter{framelevel}{-1}
   \stepcounter{seqlevel}
 }
 
@@ -208,6 +277,9 @@ Sequence Diagrams.]
     \tikzstyle{inststyle}+=[rounded corners=3mm]
     \fi
     \tikzstyle{loopstyle}=[anchor=north west]
+    \tikzstyle{framestyle}=[anchor=north west]
+    \tikzstyle{frameconsstyle}=[anchor=north west]
+    \tikzstyle{dot}=[inner sep=0pt,fill=black,circle,minimum size=0.2pt]
     \global\def\unitfactor{0.6}
     \global\def\threadbias{center}
     % reset counters
@@ -217,6 +289,7 @@ Sequence Diagrams.]
     \setcounter{seqlevel}{0}
     \setcounter{callevel}{0}
     \setcounter{looplevel}{0}
+    \setcounter{framelevel}{0}
 
     % origin
     \node[coordinate] (inst0) {};
@@ -224,7 +297,7 @@ Sequence Diagrams.]
 {
   \begin{pgfonlayer}{background}
     \foreach \t [evaluate=\t] in {1,...,\theinstnum}{
-      \draw[dotted] (inst\t) -- ++(0,-\theseqlevel*\unitfactor-2.2*\unitfactor);
+      \draw[dashed] (inst\t) -- ++(0,-\theseqlevel*\unitfactor-2.2*\unitfactor);
     }
     \foreach \t [evaluate=\t] in {1,...,\thethreadnum}{
       \path (thread\t)+(0,-\theseqlevel*\unitfactor-0.1*\unitfactor) node (threadend) {};
