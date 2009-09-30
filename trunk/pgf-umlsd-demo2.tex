@@ -2,7 +2,7 @@
 % UML sequence diagrams. Written by Xu Yuan <xuyuan.cn@gmail.com> from
 % Southeast University, China.
 
-% The used style-file is part of pgf-umlsd-0.2.tar.gz
+% The used style-file is part of pgf-umlsd
 % you may get it at
 % http://code.google.com/p/pgf-umlsd/
 
@@ -30,7 +30,7 @@
     
     \begin{call}{ss}{Initialize()}{sense}{}
     \end{call}
-    \begin{sdloop}{Run Loop}
+    \begin{sdblock}{Run Loop}{}
       \begin{call}{ss}{StartCycle()}{ctr}{}
         \begin{call}{ctr}{ActAgent()}{sense}{}
         \end{call}
@@ -47,7 +47,7 @@
         \begin{call}{ctr}{SenseAgent()}{sense}{}
         \end{call}
       \end{call}
-    \end{sdloop}
+    \end{sdblock}
   \end{sequencediagram}
 
   \caption{UML sequence diagram demo. The used style-file is part of pgf-umlsd-0.2.tar.gz
@@ -60,10 +60,10 @@ Get it at http://code.google.com/p/pgf-umlsd/}
   \tikzstyle{inststyle}+=[rounded corners=0mm, bottom color=yellow] %% with rounded corners=0mm we get the standard behavior again
     \newthread{ss}{\ul{:SimulationServer}} 			    %% to show, that one is able, to underline special elements
     \newinst{ps}{:PhysicsServer}
-    \newinst[1]{sense}{\ul{:SenseServer}} 			    %% to show, that one is able, to underline special elements
+    \newinst[2]{sense}{\ul{:SenseServer}} 			    %% to show, that one is able, to underline special elements
     \newthread[red]{ctr}{:SimControlNode}
     
-    \begin{sdloop}[green!20]{Run Loop}
+    \begin{sdblock}[green!20]{Run Loop}{\small This is the main loop.}
       \mess{ctr}{StartCycle}{ss}
       \begin{call}{ss}{Update()}{ps}{}
         \prelevel
@@ -77,6 +77,10 @@ Get it at http://code.google.com/p/pgf-umlsd/}
         \end{call}
         \setthreadbias{center}
         \begin{callself}{ps}{Update()}{}
+          \begin{callself}{ps}{\small CollisionDetection()}{}
+          \end{callself}
+          \begin{callself}{ps}{Dynamics()}{}
+          \end{callself}
         \end{callself}
         \begin{call}{ps}{PostPhysicsUpdate()}{sense}{}
         \end{call}
@@ -86,7 +90,7 @@ Get it at http://code.google.com/p/pgf-umlsd/}
         \begin{call}{ctr}{Write}{sense}{}
         \end{call}
       \end{callself}
-    \end{sdloop}
+    \end{sdblock}
 
   \end{sequencediagram}
   \caption{Example of a sequence with parallel activities.The used style-file is part of pgf-umlsd-0.2.tar.gz --

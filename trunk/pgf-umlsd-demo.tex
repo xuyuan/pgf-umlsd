@@ -1,7 +1,7 @@
 % Demonstration of pgf-umlsd.sty, a convenient set of macros for drawing
 % UML sequence diagrams. Written by Xu Yuan <xuyuan.cn@gmail.com> from
 % Southeast University, China.
-% The used style-file is part of pgf-umlsd.sty
+% This file is part of pgf-umlsd
 % you may get it at
 % http://code.google.com/p/pgf-umlsd/
 
@@ -23,18 +23,18 @@
     
     \begin{call}{ss}{Initialize()}{sense}{}
     \end{call}
-    \begin{sdloop}{Run Loop}
+    \begin{sdblock}{Run Loop}{The main loop}
       \begin{call}{ss}{StartCycle()}{ctr}{}
         \begin{call}{ctr}{ActAgent()}{sense}{}
         \end{call}
       \end{call}
       \begin{call}{ss}{Update()}{ps}{}
-        \begin{call}{ps}{PrePhysicsUpdate()}{sense}{state}
-        \end{call}
-        \begin{sdloop}{Physics Loop}
+        \begin{messcall}{ps}{PrePhysicsUpdate()}{sense}{state}
+        \end{messcall}
+        \begin{sdblock}{Physics Loop}{}
           \begin{callself}{ps}{PhysicsUpdate()}{}
           \end{callself}
-        \end{sdloop}
+        \end{sdblock}
         \begin{call}{ps}{PostPhysicsUpdate()}{sense}{}
         \end{call}
       \end{call}
@@ -42,7 +42,7 @@
         \begin{call}{ctr}{SenseAgent()}{sense}{}
         \end{call}
       \end{call}
-    \end{sdloop}
+    \end{sdblock}
   \end{sequencediagram}
   \caption{UML sequence diagram demo. The used style-file is 
     \texttt{pgf-umlsd.sty}, you may get it at
@@ -55,10 +55,10 @@
     \tikzstyle{inststyle}+=[bottom color=yellow] % custom the style
     \newthread[blue]{ss}{:SimulationServer}
     \newinst{ps}{:PhysicsServer}
-    \newinst[1]{sense}{:SenseServer}
+    \newinst[2]{sense}{:SenseServer}
     \newthread[red]{ctr}{:SimControlNode}
     
-    \begin{sdloop}[green!20]{Run Loop}
+    \begin{sdblock}[green!20]{Run Loop}{The main loop}
       \mess{ctr}{StartCycle}{ss}
       \begin{call}{ss}{Update()}{ps}{}
         \prelevel
@@ -72,6 +72,10 @@
         \end{call}
         \setthreadbias{center}
         \begin{callself}{ps}{Update()}{}
+          \begin{callself}{ps}{\small CollisionDetection()}{}
+          \end{callself}
+          \begin{callself}{ps}{Dynamics()}{}
+          \end{callself}
         \end{callself}
         \begin{call}{ps}{PostPhysicsUpdate()}{sense}{}
         \end{call}
@@ -81,7 +85,7 @@
         \begin{call}{ctr}{Write}{sense}{}
         \end{call}
       \end{callself}
-    \end{sdloop}
+    \end{sdblock}
 
   \end{sequencediagram}
   \caption{Example of a sequence with parallel activities and the

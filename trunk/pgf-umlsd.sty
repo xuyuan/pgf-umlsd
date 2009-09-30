@@ -4,8 +4,12 @@
 % Some macros for UML Sequence Diagrams.
 % Home page of project: http://pgf-umlsd.googlecode.com/
 % Author: Xu Yuan <xuyuan.cn@gmail.com>, Southeast University, China
+% Contributor: Nobel Huang <nobel1984@gmail.com>, Southeast University, China
 %
 % History:
+% v0.5 2009/09/30 Fix Issue 2 reported by vlado.handziski
+%      - Nested callself is supported
+%      - Rename sdloop and sdframe to sdblock
 % v0.4 2008/12/08  Fix Issue 1 reported by MathStuf:
 %      Nested sdloop environment hides outer loop
 % v0.3 2008/11/10 in Berlin, fix for the PGF cvs version:
@@ -21,7 +25,6 @@
 %      - new option: switch rounded corners
 % v0.1 2008/01/25 first release at http://www.fauskes.net/pgftikzexamples/
 %
-% Modified by Nobel Huang <nobel1984@gmail.com>, Southeast University, China
 
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
 \ProvidesPackage{pgf-umlsd}[2008/03/20 v0.2 Some LaTeX macros for UML
@@ -51,8 +54,8 @@ Sequence Diagrams.]
 \newcounter{threadnum}
 \newcounter{seqlevel} % level
 \newcounter{callevel}
-\newcounter{looplevel}
-\newcounter{framelevel}
+\newcounter{callselflevel}
+\newcounter{blocklevel}
 
 % new an instance
 % Example:
@@ -120,16 +123,16 @@ Sequence Diagrams.]
 
 % a function do not need call others
 % Example:
-% \begin{callself}[height]{caller}{function}{return}{var}
+% \begin{callself}[height]{caller}{function}{return}
 % \end{callself}
-\newenvironment{callself}[5][1]{
+\newenvironment{callself}[4][1]{
   \stepcounter{seqlevel}
   \stepcounter{callevel} % push
+  \stepcounter{callselflevel}
+
   \path
-  (#2)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (sc\thecallevel) {}
+  (#2)+(\thecallselflevel*0.1-0.1,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (sc\thecallevel) {}
   ({sc\thecallevel}.east)+(0,-0.33*\unitfactor) node (scb\thecallevel) {};
-  \path ({#2}.east)+(0,0) node (#5) {};
-  \tikzstyle{instcolor#5}=[instcolor#2]
 
   \draw[->,>=triangle 60] ({sc\thecallevel}.east) -- ++(0.8,0)
   node[near start, above right] {#3} -- ++(0,-0.33*\unitfactor)
@@ -137,16 +140,17 @@ Sequence Diagrams.]
   \def\l\thecallevel{#1}
   \def\f\thecallevel{#2}
   \def\returnvalue{#4}
-  \tikzstyle{threadstyle}+=[instcolor#2] 
+  \tikzstyle{threadstyle}+=[instcolor#2]
 }{
   \addtocounter{seqlevel}{\l\thecallevel}
-  \path (\f\thecallevel)+(0,-\theseqlevel*\unitfactor-0.33*\unitfactor) node
+  \path (\f\thecallevel)+(\thecallselflevel*0.1-0.1,-\theseqlevel*\unitfactor-0.33*\unitfactor) node
   (sct\thecallevel) {};
 
   \draw[dashed,->,>=angle 60] ({sct\thecallevel}.east) node
   (sce\thecallevel) {} -- ++(0.8,0) -- node[midway, right]{\returnvalue} ++(0,-0.33*\unitfactor) -- ++(-0.8,0);
   \drawthread{scb\thecallevel}{sce\thecallevel}
   \addtocounter{callevel}{-1} % pop
+  \addtocounter{callselflevel}{-1}
 }
 
 % message between threads
@@ -193,75 +197,43 @@ Sequence Diagrams.]
 % manually. This function makes the call earlier.
 \newcommand{\prelevel}{\addtocounter{seqlevel}{-1}}
 
-% a loop box with caption
-% \begin{sdloop}[caption background color]{caption}
-% \end{sdlopp}
-\newenvironment{sdloop}[2][white]{
+% a block box with caption
+% \begin{sdblock}[caption background color]{caption}{comments}
+% \end{sdblock}
+\newenvironment{sdblock}[3][white]{
   \stepcounter{seqlevel}
-  \stepcounter{looplevel} % push
-  \coordinate (loopbeg\thelooplevel) at (0,-\theseqlevel*\unitfactor-\unitfactor);
+  \stepcounter{blocklevel} % push
+  \coordinate (blockbeg\theblocklevel) at (0,-\theseqlevel*\unitfactor-\unitfactor);
   \stepcounter{seqlevel}
-  \def\loopcolor\thelooplevel{#1}
-  \def\loopname\thelooplevel{#2}
+  \def\blockcolor\theblocklevel{#1}
+  \def\blockname\theblocklevel{#2}
+  \def\blockcomm\theblocklevel{#3}
   \begin{pgfinterruptboundingbox}
 }{
-  \coordinate (loopend) at (0,-\theseqlevel*\unitfactor-2*\unitfactor);
+  \coordinate (blockend) at (0,-\theseqlevel*\unitfactor-2*\unitfactor);
   \path (current bounding box.east)+(0.2,0) node (boxeast) {}
-  (current bounding box.west |- {loopbeg\thelooplevel}) + (-0.2,0)
+  (current bounding box.west |- {blockbeg\theblocklevel}) + (-0.2,0)
   node (nw) {};
-  \path (boxeast |- loopend) node (se) {};
-  \draw (nw) rectangle (boxeast |- loopend);
-
-  % title
-  \node[loopstyle] (looptitle) at (nw) {\loopname\thelooplevel};
-  \path (looptitle.south east) + (0,0.2) node (set) {}
-  (looptitle.south east) + (-0.2,0) node (seb) {};
-  \draw[fill=\loopcolor\thelooplevel] (looptitle.north west) -- (looptitle.north east) --
-  (set.center) -- (seb.center) -- (looptitle.south west) -- cycle;
-  \node[loopstyle] (looptitle) at (nw) {\loopname\thelooplevel};
-
-  \end{pgfinterruptboundingbox}
-
-  \node[dot] (fnw) at (nw) {};
-  \node[dot] (fse) at (se) {};
-
-  \addtocounter{looplevel}{-1} % pop
-  \stepcounter{seqlevel}
-}
-
-\newenvironment{sdframe}[3][white]{
-  \stepcounter{seqlevel}
-  \stepcounter{framelevel}
-  \coordinate (framebeg\theframelevel) at (0,-\theseqlevel*\unitfactor-\unitfactor);
-  \stepcounter{seqlevel}
-  \def\framecolor\theframelevel{#1}
-  \def\framename\theframelevel{#2}
-  \def\framecons\theframelevel{#3}
-  \begin{pgfinterruptboundingbox}
-}{
-  \coordinate (frameend) at (0,-\theseqlevel*\unitfactor-2*\unitfactor);
-  \path (current bounding box.east)+(0.2,0) node (boxeast) {}
-  (current bounding box.west |- {framebeg\theframelevel}) + (-0.2,0)
-  node (nw) {};
-  \path (boxeast |- frameend) node (se) {};
+  \path (boxeast |- blockend) node (se) {};
   \draw (nw) rectangle (se);
 
   % title
-  \node[framestyle] (frametitle) at (nw) {\framename\theframelevel};
-  \path (frametitle.south east) + (0,0.2) node (set) {}
-  (frametitle.south east) + (-0.2,0) node (seb) {};
-  \path (frametitle.north east) + (0.2,0) node (cons) {};
-  \draw[fill=\framecolor\theframelevel] (frametitle.north west) -- (frametitle.north east) --
-  (set.center) -- (seb.center) -- (frametitle.south west) -- cycle;
-  \node[framestyle] (frametitle) at (nw) {\framename\theframelevel};
-  \node[frameconsstyle] (framecons) at (cons) {[\framecons\theframelevel]};
+  \node[blockstyle] (blocktitle) at (nw) {\blockname\theblocklevel};
+  \path (blocktitle.south east) + (0,0.2) node (set) {}
+  (blocktitle.south east) + (-0.2,0) node (seb) {}
+  (blocktitle.north east) + (0.2,0) node (comm) {};
+  \draw[fill=\blockcolor\theblocklevel] (blocktitle.north west) -- (blocktitle.north east) --
+  (set.center) -- (seb.center) -- (blocktitle.south west) -- cycle;
+  \node[blockstyle] (blocktitle) at (nw) {\blockname\theblocklevel};
+  \node[blockcommentstyle] (blockcomment) at (comm) {\blockcomm\theblocklevel};
 
   \end{pgfinterruptboundingbox}
 
+  % add two points to keep the bounding box
   \node[dot] (fnw) at (nw) {};
   \node[dot] (fse) at (se) {};
 
-  \addtocounter{framelevel}{-1}
+  \addtocounter{blocklevel}{-1} % pop
   \stepcounter{seqlevel}
 }
 
@@ -276,9 +248,8 @@ Sequence Diagrams.]
     \ifpgfumlsdroundedcorners
     \tikzstyle{inststyle}+=[rounded corners=3mm]
     \fi
-    \tikzstyle{loopstyle}=[anchor=north west]
-    \tikzstyle{framestyle}=[anchor=north west]
-    \tikzstyle{frameconsstyle}=[anchor=north west]
+    \tikzstyle{blockstyle}=[anchor=north west]
+    \tikzstyle{blockcommentstyle}=[anchor=north west, font=\small]
     \tikzstyle{dot}=[inner sep=0pt,fill=black,circle,minimum size=0.2pt]
     \global\def\unitfactor{0.6}
     \global\def\threadbias{center}
@@ -288,8 +259,8 @@ Sequence Diagrams.]
     \setcounter{threadnum}{0}
     \setcounter{seqlevel}{0}
     \setcounter{callevel}{0}
-    \setcounter{looplevel}{0}
-    \setcounter{framelevel}{0}
+    \setcounter{callselflevel}{0}
+    \setcounter{blocklevel}{0}
 
     % origin
     \node[coordinate] (inst0) {};
@@ -297,7 +268,7 @@ Sequence Diagrams.]
 {
   \begin{pgfonlayer}{background}
     \foreach \t [evaluate=\t] in {1,...,\theinstnum}{
-      \draw[dashed] (inst\t) -- ++(0,-\theseqlevel*\unitfactor-2.2*\unitfactor);
+      \draw[dotted] (inst\t) -- ++(0,-\theseqlevel*\unitfactor-2.2*\unitfactor);
     }
     \foreach \t [evaluate=\t] in {1,...,\thethreadnum}{
       \path (thread\t)+(0,-\theseqlevel*\unitfactor-0.1*\unitfactor) node (threadend) {};
