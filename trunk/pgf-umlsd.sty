@@ -7,6 +7,9 @@
 % Contributor: Nobel Huang <nobel1984@gmail.com>, Southeast University, China
 %
 % History:
+% v0.6 2011/??/?? Fix Issue 6 reported by frankmorgner@googlemail.com
+%      - diagram without a thread
+%      - allows empty diagram
 % v0.5 2009/09/30 Fix Issue 2 reported by vlado.handziski
 %      - Nested callself is supported
 %      - Rename sdloop and sdframe to sdblock
@@ -42,6 +45,8 @@ Sequence Diagrams.]
 \DeclareOption{roundedcorners=true}{\pgfumlsdroundedcornerstrue}
 \DeclareOption{roundedcorners=false}{\pgfumlsdroundedcornersfalse}
 \ProcessOptions
+
+\RequirePackage{xifthen}
 
 % declare layers
 \pgfdeclarelayer{background}
@@ -267,14 +272,20 @@ Sequence Diagrams.]
 }
 {
   \begin{pgfonlayer}{background}
+    \ifthenelse{\theinstnum > 0}{
     \foreach \t [evaluate=\t] in {1,...,\theinstnum}{
       \draw[dotted] (inst\t) -- ++(0,-\theseqlevel*\unitfactor-2.2*\unitfactor);
     }
+    }
+    {}
+    \ifthenelse{\thethreadnum > 0}{
     \foreach \t [evaluate=\t] in {1,...,\thethreadnum}{
       \path (thread\t)+(0,-\theseqlevel*\unitfactor-0.1*\unitfactor) node (threadend) {};
       \tikzstyle{threadstyle}+=[threadcolor\t]
       \drawthread{thread\t}{threadend}
     }
+    }
+    {}
   \end{pgfonlayer}
 \end{tikzpicture}}
 
