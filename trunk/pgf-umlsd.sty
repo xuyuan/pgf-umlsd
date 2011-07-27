@@ -46,8 +46,6 @@ Sequence Diagrams.]
 \DeclareOption{roundedcorners=false}{\pgfumlsdroundedcornersfalse}
 \ProcessOptions
 
-\RequirePackage{xifthen}
-
 % declare layers
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{threadground}
@@ -272,20 +270,18 @@ Sequence Diagrams.]
 }
 {
   \begin{pgfonlayer}{background}
-    \ifthenelse{\theinstnum > 0}{
+    \ifnum\c@instnum > 0
     \foreach \t [evaluate=\t] in {1,...,\theinstnum}{
       \draw[dotted] (inst\t) -- ++(0,-\theseqlevel*\unitfactor-2.2*\unitfactor);
     }
-    }
-    {}
-    \ifthenelse{\thethreadnum > 0}{
+    \fi
+    \ifnum\c@threadnum > 0
     \foreach \t [evaluate=\t] in {1,...,\thethreadnum}{
       \path (thread\t)+(0,-\theseqlevel*\unitfactor-0.1*\unitfactor) node (threadend) {};
       \tikzstyle{threadstyle}+=[threadcolor\t]
       \drawthread{thread\t}{threadend}
     }
-    }
-    {}
+    \fi
   \end{pgfonlayer}
 \end{tikzpicture}}
 
