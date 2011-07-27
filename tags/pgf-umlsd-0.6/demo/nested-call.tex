@@ -1,0 +1,10 @@
+\begin{sequencediagram}
+  \newthread{t}{:Thread}
+  \newinst{a}{:A}
+  \newinst{b}{:B}
+
+  \begin{call}{t}{funcA()}{a}{return}
+    \begin{call}{a}{funcA()}{b}{return}
+    \end{call}
+  \end{call}
+\end{sequencediagram}

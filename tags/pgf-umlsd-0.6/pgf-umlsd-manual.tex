@@ -1,0 +1,148 @@
+% Demonstration of pgf-umlsd.sty, a convenient set of macros for drawing
+% UML sequence diagrams. Written by Xu Yuan <xuyuan.cn@gmail.com> from
+% Southeast University, China.
+% This file is part of pgf-umlsd
+% you may get it at
+% http://code.google.com/p/pgf-umlsd/
+
+\documentclass{article}
+\usepackage[margin=12mm]{geometry}
+\usepackage{hyperref}
+
+\usepackage{tikz}
+\usepackage[underline=true,rounded corners=false]{pgf-umlsd}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{listings}
+\usepackage{color}
+\definecolor{listinggray}{gray}{0.92}
+\lstset{ %
+language=[LaTeX]TeX,
+breaklines=true,
+frame=single,
+% frameround=tttt,
+basicstyle=\footnotesize\ttfamily,
+backgroundcolor=\color{listinggray},
+keywordstyle=\color{blue}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  anchorcolor=black,
+  citecolor=olive,
+  filecolor=magenta,
+  menucolor=red,
+  urlcolor=blue
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\demo}[2][1]{
+\begin{minipage}{.49\linewidth}
+\centering
+\resizebox{#1\linewidth}{!}{
+\input{demo/#2}
+}
+\end{minipage}
+\hspace{0.01\linewidth}
+\begin{minipage}{.5\linewidth}
+\lstinputlisting{demo/#2}
+\end{minipage}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\example}[2][1]{
+  \begin{center}  
+    \resizebox{#1\linewidth}{!}{
+      \input{demo/#2}
+    }
+  \end{center}
+  \lstinputlisting{demo/#2}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Drawing UML Sequence Diagram by using \texttt{pgf-umlsd}}
+\author{\href{mailto:xuyuan.cn@gmail.com}{Yuan Xu}}
+\date{\today{}~(v0.6)}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abstract}
+  \texttt{pgf-umlsd} is a LaTeX package for drawing UML Sequence
+  Diagrams. As stated by its name, it is based on a very popular
+  graphic package \texttt{PGF/TikZ}. This document presents the usage
+  of \texttt{pgf-umlsd} and collects some UML sequence diagrams as
+  examples. \texttt{pgf-umlsd} can be downloaded from
+  \href{http://code.google.com/p/pgf-umlsd/}{http://code.google.com/p/pgf-umlsd/}.
+\end{abstract}
+
+\tableofcontents
+
+\section{The Essentials}
+\subsection{Basic graphics objects}
+\subsubsection{empty diagram}
+\demo{empty}
+
+\subsubsection{thread}
+\demo[0.3]{thread}
+
+\subsubsection{instance}
+\demo[0.3]{instance}
+
+\subsubsection{distance between threads and instances}
+\demo{distance}
+
+\subsubsection{customization}
+The package has two options for customization: \texttt{underline} and
+\texttt{rounded corners}, further customization see the example below:
+
+\demo{customize}
+
+
+\subsection{Call}
+\subsubsection{call}
+\demo[0.6]{call}
+
+\subsubsection{call self}
+\demo[0.6]{callself}
+
+\subsubsection{message call}
+\demo[0.6]{messcall}
+
+\subsubsection{nested call}
+\demo[0.6]{nested-call}
+
+\subsection{Message}
+\demo[0.6]{message}
+
+\subsection{Block}
+\demo[0.6]{block}
+
+\section{Examples}
+\subsection{Single thread}
+\example[0.8]{single-thread-example}
+
+\subsection{Multi-threads}
+\example[0.8]{multi-threads-example}
+
+\section{Acknowledgements}
+Many people contributed to \texttt{pgf-umlsd} by reporting problems,
+suggesting various improvements or submitting code. Here is a list of
+these people:
+\href{mailto:nobel1984@gmail.com}{Nobel Huang},
+\href{mailto:humbert@uni-wuppertal.de}{Dr. Ludger Humbert},
+\href{mailto:MathStuf@gmail.com}{MathStuf},
+\href{mailto:vlado.handziski@gmail.com}{Vlado Handziski},
+and \href{mailto:frankmorgner@gmail.com}{Frank Morgner}.
+
+\end{document}
+%%% Local Variables: 
+%%% mode: Tex-PDF
+%%% TeX-master: t
+%%% End: 

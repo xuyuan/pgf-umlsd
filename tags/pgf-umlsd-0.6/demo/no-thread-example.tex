@@ -1,0 +1,33 @@
+\begin{sequencediagram}
+  \tikzstyle{inststyle}+=[{font=\large}]
+  \def\unitfactor{.9}
+
+  \newinst{instance 1}
+  {instance 1}
+
+  \newinst{instance 2}
+  {instance 2}
+
+  \newinst[4cm]{instance 3}
+  {instance 3}
+
+  \tikzstyle{instcolordienst}=[fill=black!25]
+  \tikzstyle{instcolorbuerger}=[fill=black!25]
+
+  \messcall{instance 3}{data 1}{instance 2}
+
+  \begin{call}
+    {instance 3}{data 2}
+    {instance 2}{data 2*}
+
+    \begin{callself}
+      {instance 2}{Nutzerinteraktion}{data 3, data 2}
+    \end{callself}
+
+    \begin{call}
+      {instance 2}{data 4, data 2}
+      {instance 1}{}
+    \end{call}
+  \end{call}
+
+\end{sequencediagram}
