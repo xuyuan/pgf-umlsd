@@ -7,9 +7,11 @@
 % Contributor: Nobel Huang <nobel1984@gmail.com>, Southeast University, China
 %
 % History:
-% v0.6 2011/??/?? Fix Issue 6 reported by frankmorgner@googlemail.com
-%      - diagram without a thread
-%      - allows empty diagram
+% v0.6 2011/07/27
+%      - Fix Issue 6 reported by frankmorgner@gmail.com
+%        - diagram without a thread
+%        - allows empty diagram
+%      - New manual
 % v0.5 2009/09/30 Fix Issue 2 reported by vlado.handziski
 %      - Nested callself is supported
 %      - Rename sdloop and sdframe to sdblock
@@ -32,6 +34,8 @@
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
 \ProvidesPackage{pgf-umlsd}[2009/09/30 v0.5 Some LaTeX macros for UML
 Sequence Diagrams.]
+
+\usetikzlibrary{arrows,shadows}
 
 % Options
 % ? the instance name under line ?
