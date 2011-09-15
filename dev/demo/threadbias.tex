@@ -1,0 +1,17 @@
+\begin{sequencediagram}
+  \newthread[blue]{s1}{:Server1}
+  \newinst{db}{:Database}
+  \newthread[red]{s2}{:Server2}
+
+  \begin{call}{s1}{reading}{db}{data}
+    \postlevel
+  \end{call}
+
+  \prelevel\prelevel
+
+  \setthreadbias{east}
+
+  \begin{call}{s2}{reading}{db}{data}
+    \postlevel
+  \end{call}
+\end{sequencediagram}

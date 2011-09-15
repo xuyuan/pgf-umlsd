@@ -41,16 +41,20 @@ keywordstyle=\color{blue}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\demo}[2][1]{
-\begin{minipage}{.49\linewidth}
-\centering
-\resizebox{#1\linewidth}{!}{
-\input{demo/#2}
-}
-\end{minipage}
-\hspace{0.01\linewidth}
-\begin{minipage}{.5\linewidth}
-\lstinputlisting{demo/#2}
-\end{minipage}
+  \begin{center}
+  \begin{tabular}{cc}
+    \begin{minipage}{.49\linewidth}
+      \centering
+      \resizebox{#1\linewidth}{!}{
+        \input{demo/#2}
+      }
+    \end{minipage}
+    &
+    \begin{minipage}{.45\linewidth}
+      \lstinputlisting{demo/#2}
+    \end{minipage}
+  \end{tabular}
+  \end{center}
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -124,6 +128,33 @@ The package has two options for customization: \texttt{underline} and
 \subsection{Block}
 \demo[0.6]{block}
 
+\section{Manually adjustment}
+The idea of \texttt{pgf-umlsd} is users only have to write the logic
+of diagram, the program generates figure automatically. However, the
+package can not handle all the use case, it still needs to be adjusted
+manually.
+
+\subsection{Level}
+If the text on the arrows is more than one line (large function name
+for example) it will overlap other things. \texttt{postlevel} can be
+used to make the time (level) later.
+
+\demo[0.6]{postlevel}
+
+In the situation of multi-threads, some events happen at the same
+time. \texttt{prelevel} can make the call earlier.
+
+\demo[0.6]{prelevel}
+
+\subsection{Bias of thread line}
+In the situation of multi-threads, the instance cen be accessed at the
+same time (e.g. two threads reading data at the same time). Currently,
+we have to adjust the bias of thread line manually for this. Possible
+parameters for \texttt{setthreadbias} are: \texttt{center},
+\texttt{west} and \texttt{east}.
+
+\demo[0.8]{threadbias}
+
 \section{Examples}
 \subsection{Single thread}
 \example[0.8]{single-thread-example}
@@ -139,7 +170,8 @@ these people:
 \href{mailto:humbert@uni-wuppertal.de}{Dr. Ludger Humbert},
 \href{mailto:MathStuf@gmail.com}{MathStuf},
 \href{mailto:vlado.handziski@gmail.com}{Vlado Handziski},
-and \href{mailto:frankmorgner@gmail.com}{Frank Morgner}.
+\href{mailto:frankmorgner@gmail.com}{Frank Morgner},
+and \href{mailto:petrautzki@hs-coburg.de}{Dirk Petrautzki}.
 
 \end{document}
 %%% Local Variables: 

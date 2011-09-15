@@ -1,0 +1,12 @@
+\begin{sequencediagram}
+  \newthread{t1}{:Thread1}
+  \newthread[gray]{t2}{:Thread2}
+
+  \begin{callself}{t1}{loop}{}
+  \end{callself}
+
+  \prelevel\prelevel
+
+  \begin{callself}{t2}{loop}{}
+  \end{callself}
+\end{sequencediagram}

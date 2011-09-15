@@ -199,10 +199,11 @@ Sequence Diagrams.]
 % manually. Possible parameters are: center, west, east
 \newcommand{\setthreadbias}[1]{\global\def\threadbias{#1}}
 
-% In the situation of multi-threads, some events happen at the same
-% time. Currently, we have to adjust the level(time) of events
-% manually. This function makes the call earlier.
+% This function makes the call earlier.
 \newcommand{\prelevel}{\addtocounter{seqlevel}{-1}}
+
+% This function makes the call later.
+\newcommand{\postlevel}{\addtocounter{seqlevel}{+1}}
 
 % a block box with caption
 % \begin{sdblock}[caption background color]{caption}{comments}
