@@ -1,0 +1,16 @@
+\begin{sequencediagram}
+  \newthread{a}{:Machine A}
+  \newthread[gray]{b}{:Machine B}
+
+  \mess[1]{a}{}{b}
+  \node[anchor=east] (t0) at (mess from) {$t_0$};
+  \node[anchor=west] (t1) at (mess to) {$t_1$};
+  \prelevel
+  \mess[1]{b}{}{a}
+  \node[anchor=east] (t2) at (mess to) {$t_2$};
+
+  \path (t0.east) |- coordinate(t12) (t1);
+  \draw[dashed] (t1) -- (t12);
+  \node[anchor=south west] at (t12) {$\Delta{}t_1$};
+  \node[anchor=north west] at (t12) {$\Delta{}t_2$};
+\end{sequencediagram}
