@@ -163,13 +163,15 @@ Sequence Diagrams.]
 
 % message between threads
 % Example:
-% \mess{sender}{message content}{receiver}
-\newcommand{\mess}[3]{
+% \mess[delay]{sender}{message content}{receiver}
+\newcommand{\mess}[4][0]{
   \stepcounter{seqlevel}
   \path
-  (#1)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (messbeg) {}
-  (#3)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (messend) {};
-  \draw[->,>=angle 60] (messbeg) -- (messend) node[midway, above] {#2};
+  (#2)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (messbeg) {};
+  \addtocounter{seqlevel}{#1}
+  \path
+  (#4)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (messend) {};
+  \draw[->,>=angle 60] (messbeg) -- (messend) node[midway, above] {#3};
 }
 
 \newenvironment{messcall}[4][1]{
