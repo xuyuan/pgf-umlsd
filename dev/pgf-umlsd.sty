@@ -38,6 +38,8 @@ Sequence Diagrams.]
 \RequirePackage{tikz}
 \usetikzlibrary{arrows,shadows}
 
+\RequirePackage{ifthen}
+
 % Options
 % ? the instance name under line ?
 \newif\ifpgfumlsdunderline\pgfumlsdunderlinetrue
@@ -104,6 +106,27 @@ Sequence Diagrams.]
 % \begin{call}[height]{caller}{function}{callee}{return}
 % \end{call}
 \newenvironment{call}[5][1]{
+\ifthenelse{\equal{#2}{#4}}
+{
+  \begin{callself}[#1]{#2}{#3}{#5}
+}
+{
+  \begin{callanother}[#1]{#2}{#3}{#4}{#5}
+}
+}
+{
+\ifthenelse{\equal{\f\thecallevel}{\t\thecallevel}}
+{
+  \end{callself}
+}
+{
+  \end{callanother}
+}
+}
+
+% function call to another instance
+% interal use only
+\newenvironment*{callanother}[5][1]{
   \stepcounter{seqlevel}
   \stepcounter{callevel} % push
   \path
@@ -130,10 +153,11 @@ Sequence Diagrams.]
 }
 
 % a function do not need call others
+% interal use only
 % Example:
 % \begin{callself}[height]{caller}{function}{return}
 % \end{callself}
-\newenvironment{callself}[4][1]{
+\newenvironment*{callself}[4][1]{
   \stepcounter{seqlevel}
   \stepcounter{callevel} % push
   \stepcounter{callselflevel}
@@ -147,6 +171,7 @@ Sequence Diagrams.]
   -- (scb\thecallevel); 
   \def\l\thecallevel{#1}
   \def\f\thecallevel{#2}
+  \def\t\thecallevel{#2}
   \def\returnvalue{#4}
   \tikzstyle{threadstyle}+=[instcolor#2]
 }{
