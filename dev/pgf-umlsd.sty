@@ -258,9 +258,8 @@ Sequence Diagrams.]
   (current bounding box.west |- {blockbeg\theblocklevel}) + (-0.2,0)
   node (nw) {};
   \path (boxeast |- blockend) node (se) {};
-  \draw (nw) rectangle (se);
 
-  % title
+  % % title
   \node[blockstyle] (blocktitle) at (nw) {\blockname\theblocklevel};
   \path (blocktitle.south east) + (0,0.2) node (set) {}
   (blocktitle.south east) + (-0.2,0) node (seb) {}
@@ -270,11 +269,10 @@ Sequence Diagrams.]
   \node[blockstyle] (blocktitle) at (nw) {\blockname\theblocklevel};
   \node[blockcommentstyle] (blockcomment) at (comm) {\blockcomm\theblocklevel};
 
+  \coordinate (se) at (current bounding box.south east);
   \end{pgfinterruptboundingbox}
 
-  % add two points to keep the bounding box
-  \node[dot] (fnw) at (nw) {};
-  \node[dot] (fse) at (se) {};
+  \draw (se) rectangle (nw);
 
   \addtocounter{blocklevel}{-1} % pop
   \stepcounter{seqlevel}
