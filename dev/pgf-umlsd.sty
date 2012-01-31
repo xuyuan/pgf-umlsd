@@ -7,9 +7,10 @@
 % Contributor: Nobel Huang <nobel1984@gmail.com>, Southeast University, China
 %
 % History:
-% v0.7 2011
+% v0.7 2012
 %      - unify interface of call and callself
 %      - non-instantaneous message
+%      - bugfix: conflits with tikz library backgrounds
 % v0.6 2011/07/27
 %      - Fix Issue 6 reported by frankmorgner@gmail.com
 %        - diagram without a thread
@@ -56,11 +57,6 @@ Sequence Diagrams.]
 \DeclareOption{roundedcorners=false}{\pgfumlsdroundedcornersfalse}
 \ProcessOptions
 
-% declare layers
-\pgfdeclarelayer{background}
-\pgfdeclarelayer{threadground}
-\pgfsetlayers{background,threadground,main}
-
 % new counters
 \newcounter{preinst}
 \newcounter{instnum}
@@ -99,7 +95,7 @@ Sequence Diagrams.]
 
 % draw running (thick) line, should not call directly
 \newcommand*{\drawthread}[2]{
-  \begin{pgfonlayer}{threadground}
+  \begin{pgfonlayer}{umlsd@threadlayer}
     \draw[threadstyle] (#1.west) -- (#1.east) -- (#2.east) -- (#2.west) -- cycle;
   \end{pgfonlayer}
 }
@@ -280,6 +276,11 @@ Sequence Diagrams.]
 
 % the environment of sequence diagram
 \newenvironment{sequencediagram}{
+  % declare layers
+  \pgfdeclarelayer{umlsd@background}
+  \pgfdeclarelayer{umlsd@threadlayer}
+  \pgfsetlayers{umlsd@background,umlsd@threadlayer,main}
+
   \begin{tikzpicture}
     \setlength{\unitlength}{1cm}
     \tikzstyle{sequence}=[coordinate]
@@ -307,7 +308,7 @@ Sequence Diagrams.]
     \node[coordinate] (inst0) {};
 }
 {
-  \begin{pgfonlayer}{background}
+  \begin{pgfonlayer}{umlsd@background}
     \ifnum\c@instnum > 0
     \foreach \t [evaluate=\t] in {1,...,\theinstnum}{
       \draw[dotted] (inst\t) -- ++(0,-\theseqlevel*\unitfactor-2.2*\unitfactor);
