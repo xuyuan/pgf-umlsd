@@ -1,0 +1,37 @@
+\begin{sequencediagram}
+  \tikzstyle{inststyle}+=[bottom color=yellow] % custom the style
+  \newthread[blue]{ss}{:SimulationServer}
+  \newinst{ps}{:PhysicsServer}
+  \newinst[2]{sense}{:SenseServer}
+  \newthread[red]{ctr}{:SimControlNode}
+  
+  \begin{sdblock}[green!20]{Run Loop}{The main loop}
+    \mess{ctr}{StartCycle}{ss}
+    \begin{call}{ss}{Update()}{ps}{}
+      \prelevel
+      \begin{call}{ctr}{SenseAgent()}{ctr}{}
+        \begin{call}[3]{ctr}{Read}{sense}{}
+        \end{call}
+      \end{call}
+      \prelevel\prelevel\prelevel\prelevel
+      \setthreadbias{west}
+      \begin{call}{ps}{PrePhysicsUpdate()}{sense}{}
+      \end{call}
+      \setthreadbias{center}
+      \begin{call}{ps}{Update()}{ps}{}
+        \begin{call}{ps}{\small CollisionDetection()}{ps}{}
+        \end{call}
+        \begin{call}{ps}{Dynamics()}{ps}{}
+        \end{call}
+      \end{call}
+      \begin{call}{ps}{PostPhysicsUpdate()}{sense}{}
+      \end{call}
+    \end{call}
+    \mess{ss}{EndCycle}{ctr}
+    \begin{call}{ctr}{ActAgent()}{ctr}{}
+      \begin{call}{ctr}{Write}{sense}{}
+      \end{call}
+    \end{call}
+  \end{sdblock}
+
+\end{sequencediagram}
