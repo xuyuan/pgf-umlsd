@@ -8,8 +8,8 @@
 \documentclass{article}
 \usepackage[margin=12mm]{geometry}
 \usepackage{hyperref}
-
 \usepackage[underline=true,rounded corners=false]{pgf-umlsd}
+\usetikzlibrary{calc}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{listings}
@@ -170,6 +170,9 @@ parameters for \texttt{setthreadbias} are: \texttt{center},
 
 \subsection{Annotation}
 \example[0.5]{sync-clock}
+
+\subsection{Protocol Message Diagram}
+\example[0.8]{protocol-message-diagram}
 
 \subsection{Known Issue}
 \texttt{pgf-umlsd} confilts with tikz \texttt{backgrounds} library.
