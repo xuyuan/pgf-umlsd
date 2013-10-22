@@ -82,6 +82,13 @@ Sequence Diagrams.]
   \stepcounter{preinst}
 }
 
+% TODO: use tikzstyle for optional arguments
+\newcommand{\newhiddenthread}[2][0.2]{
+  \path (inst\thepreinst.east)+(#1,-0.5*\unitfactor) node (#2) {};
+  \tikzstyle{instcolor#2}=[]
+  \stepcounter{preinst}
+}
+
 % new an instance thread
 % Example:
 % \newinst[color]{var}{name}{class}
