@@ -195,7 +195,49 @@ Sequence Diagrams.]
 % message between threads
 % Example:
 % \mess[delay]{sender}{message content}{receiver}
+% a function to send a message
+% Example:
+% \mess[delay]{sender}{message content}{receiver}
 \newcommand{\mess}[4][0]{
+    \ifthenelse{\equal{#2}{#4}}
+    {
+        \ifthenelse{\equal{#1}{0}}
+        {
+          \messself[1]{#2}{#3}
+        }
+        {
+        \messself[#1]{#2}{#3}
+        }
+    }
+    {
+      \messanother[#1]{#2}{#3}{#4}
+    }
+}
+
+% a function for self messaging
+% internal use only
+\newcommand*{\messself}[3][1]{
+  \stepcounter{seqlevel}
+  \stepcounter{callevel} % push
+  \stepcounter{callselflevel}
+  \def\l\thecallevel{#1}
+  \def\f\thecallevel{#2}
+  \path
+(\f\thecallevel)+(\thecallselflevel*0.1-0.1,-\theseqlevel*\unitfactor-0.33*\unitfactor)
+node
+  (sct\thecallevel) {};
+  \addtocounter{seqlevel}{\l\thecallevel}
+  \draw[->,>=angle 60] ({sct\thecallevel}.east) node
+  (sce\thecallevel) {} -- ++(0.8,0) -- node[midway, right]{#3}
+++(0,-\l\thecallevel*\unitfactor) -- ++(-0.8,0);
+
+  \addtocounter{callevel}{-1} % pop
+  \addtocounter{callselflevel}{-1}
+}
+
+% message between threads
+% internal use only
+\newcommand*{\messanother}[4][0]{
   \stepcounter{seqlevel}
   \path
   (#2)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (mess from) {};
