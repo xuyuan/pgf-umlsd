@@ -55,6 +55,11 @@ Sequence Diagrams.]
 \DeclareOption{roundedcorners}{\pgfumlsdroundedcornerstrue}
 \DeclareOption{roundedcorners=true}{\pgfumlsdroundedcornerstrue}
 \DeclareOption{roundedcorners=false}{\pgfumlsdroundedcornersfalse}
+% ? the instance box with shadow ?
+\newif\ifpgfumlsdshadow\pgfumlsdshadowtrue
+\DeclareOption{shadow}{\pgfumlsdshadowtrue}
+\DeclareOption{shadow=true}{\pgfumlsdshadowtrue}
+\DeclareOption{shadow=false}{\pgfumlsdshadowfalse}
 \ProcessOptions
 
 % new counters
@@ -334,8 +339,10 @@ node
     \setlength{\unitlength}{1cm}
     \tikzstyle{sequence}=[coordinate]
     \tikzstyle{inststyle}=[rectangle, draw, anchor=west, minimum
-    height=0.8cm, minimum width=1.6cm, fill=white, 
-    drop shadow={opacity=1,fill=black}]
+    height=0.8cm, minimum width=1.6cm, fill=white]
+    \ifpgfumlsdshadow
+    \tikzstyle{inststyle}+=[drop shadow={opacity=1,fill=black}]
+    \fi
     \ifpgfumlsdroundedcorners
     \tikzstyle{inststyle}+=[rounded corners=3mm]
     \fi
