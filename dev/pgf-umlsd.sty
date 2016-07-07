@@ -39,7 +39,7 @@
 \ProvidesPackage{pgf-umlsd}[2011/07/27 v0.6 Some LaTeX macros for UML
 Sequence Diagrams.]
 
-\RequirePackage{tikz}
+\RequirePackage{tikz, xstring}
 \usetikzlibrary{arrows,shadows}
 
 \RequirePackage{ifthen}
@@ -252,8 +252,13 @@ node
   \draw[->,>=angle 60] (mess from) -- (mess to) node[midway, above]
   {#3};
 
-  \node (#3 from) at (mess from) {};
-  \node (#3 to) at (mess to) {};
+  \StrSubstitute{#3}{(}{*}[\messName]
+  \StrSubstitute{\messName}{)}{*}[\messName]
+  \StrSubstitute{\messName}{,}{*}[\messName]
+  \StrSubstitute{\messName}{;}{*}[\messName]
+
+  \node (\messName from) at (mess from) {};
+  \node (\messName to) at (mess to) {};
 }
 
 \newenvironment{messcall}[4][1]{
