@@ -68,13 +68,27 @@ Sequence Diagrams.]
 \newcounter{threadnum}
 \newcounter{seqlevel} % level
 \newcounter{callevel}
-\newcounter{callselflevel}
 \newcounter{blocklevel}
+
+% From https://tex.stackexchange.com/questions/155776/check-if-counter-exists
+% Tests if a counter has already been defined.
+% Usage:
+% \ifcounter{counter name}{action if exists}{action else}
+\newcommand*\ifcounter[1]{%
+  \ifcsname c@#1\endcsname
+  \expandafter\@firstoftwo
+  \else
+  \expandafter\@secondoftwo
+  \fi
+}
 
 % new an instance
 % Example:
 % \newinst[edge distance]{var}{name:class}
 \newcommand{\newinst}[3][0.2]{
+  \ifcounter{callselflevel#2}
+  {\setcounter{callselflevel#2}{0}}
+  {\newcounter{callselflevel#2}}
   \stepcounter{instnum}
   \path (inst\thepreinst.east)+(#1,0) node[inststyle] (inst\theinstnum)
   {\ifpgfumlsdunderline
@@ -171,30 +185,30 @@ Sequence Diagrams.]
 \newenvironment*{callself}[4][1]{
   \stepcounter{seqlevel}
   \stepcounter{callevel} % push
-  \stepcounter{callselflevel}
+  \def\l\thecallevel{#1}
+  \def\f\thecallevel{#2}
+  \def\t\thecallevel{#2}
+  \stepcounter{callselflevel\f\thecallevel}
 
   \path
-  (#2)+(\thecallselflevel*0.1-0.1,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (sc\thecallevel) {}
+  (#2)+(\arabic{callselflevel\f\thecallevel}*0.1-0.1,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (sc\thecallevel) {}
   ({sc\thecallevel}.east)+(0,-0.33*\unitfactor) node (scb\thecallevel) {};
 
   \draw[->,>=triangle 60] ({sc\thecallevel}.east) -- ++(0.8,0)
   node[near start, above right] {#3} -- ++(0,-0.33*\unitfactor)
   -- (scb\thecallevel); 
-  \def\l\thecallevel{#1}
-  \def\f\thecallevel{#2}
-  \def\t\thecallevel{#2}
   \def\returnvalue{#4}
   \tikzstyle{threadstyle}+=[instcolor#2]
 }{
   \addtocounter{seqlevel}{\l\thecallevel}
-  \path (\f\thecallevel)+(\thecallselflevel*0.1-0.1,-\theseqlevel*\unitfactor-0.33*\unitfactor) node
+  \path (\f\thecallevel)+(\arabic{callselflevel\f\thecallevel}*0.1-0.1,-\theseqlevel*\unitfactor-0.33*\unitfactor) node
   (sct\thecallevel) {};
 
   \draw[dashed,->,>=angle 60] ({sct\thecallevel}.east) node
   (sce\thecallevel) {} -- ++(0.8,0) -- node[midway, right]{\returnvalue} ++(0,-0.33*\unitfactor) -- ++(-0.8,0);
   \drawthread{scb\thecallevel}{sce\thecallevel}
   \addtocounter{callevel}{-1} % pop
-  \addtocounter{callselflevel}{-1}
+  \addtocounter{callselflevel\f\thecallevel}{-1}
 }
 
 % message between threads
@@ -224,11 +238,11 @@ Sequence Diagrams.]
 \newcommand*{\messself}[3][1]{
   \stepcounter{seqlevel}
   \stepcounter{callevel} % push
-  \stepcounter{callselflevel}
   \def\l\thecallevel{#1}
   \def\f\thecallevel{#2}
+  \stepcounter{callselflevel\f\thecallevel}
   \path
-(\f\thecallevel)+(\thecallselflevel*0.1-0.1,-\theseqlevel*\unitfactor-0.33*\unitfactor)
+(\f\thecallevel)+(\arabic{callselflevel\f\thecallevel}*0.1-0.1,-\theseqlevel*\unitfactor-0.33*\unitfactor)
 node
   (sct\thecallevel) {};
   \addtocounter{seqlevel}{\l\thecallevel}
@@ -237,7 +251,7 @@ node
 ++(0,-\l\thecallevel*\unitfactor) -- ++(-0.8,0);
 
   \addtocounter{callevel}{-1} % pop
-  \addtocounter{callselflevel}{-1}
+  \addtocounter{callselflevel\f\thecallevel}{-1}
 }
 
 % message between threads
@@ -357,7 +371,6 @@ node
     \setcounter{threadnum}{0}
     \setcounter{seqlevel}{0}
     \setcounter{callevel}{0}
-    \setcounter{callselflevel}{0}
     \setcounter{blocklevel}{0}
 
     % origin
