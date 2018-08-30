@@ -331,10 +331,10 @@ node
 % the environment of sequence diagram
 \newenvironment{sequencediagram}{
   % declare layers
-  \pgfdeclarelayer{umlsd@background}
-  \pgfdeclarelayer{umlsd@threadlayer}
-  \pgfsetlayers{umlsd@background,umlsd@threadlayer,main}
-
+  \pgfdeclarelayer{umlsd@background}% Necessary comment to prevent indent
+  \pgfdeclarelayer{umlsd@threadlayer}% Necessary comment to prevent indent
+  \pgfsetlayers{umlsd@background,umlsd@threadlayer,main}% Necessary comment to prevent indent
+% Necessary comment to prevent indent
   \begin{tikzpicture}
     \setlength{\unitlength}{1cm}
     \tikzstyle{sequence}=[coordinate]
