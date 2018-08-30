@@ -345,10 +345,10 @@ node
 % the environment of sequence diagram
 \newenvironment{sequencediagram}{
   % declare layers
-  \pgfdeclarelayer{umlsd@background}
-  \pgfdeclarelayer{umlsd@threadlayer}
-  \pgfsetlayers{umlsd@background,umlsd@threadlayer,main}
-
+  \pgfdeclarelayer{umlsd@background}%
+  \pgfdeclarelayer{umlsd@threadlayer}%
+  \pgfsetlayers{umlsd@background,umlsd@threadlayer,main}%
+  %
   \begin{tikzpicture}
     \setlength{\unitlength}{1cm}
     \tikzstyle{sequence}=[coordinate]
