@@ -73,12 +73,12 @@ Sequence Diagrams.]
 % From https://tex.stackexchange.com/questions/155776/check-if-counter-exists
 % Tests if a counter has already been defined.
 % Usage:
-% \ifcounter{counter name}{action if exists}{action else}
-\newcommand*\ifcounter[1]{%
+% \pgf@umlsd@ifcounter{counter name}{action if exists}{action else}
+\newcommand*\pgf@umlsd@ifcounter[1]{%
   \ifcsname c@#1\endcsname
-  \expandafter\@firstoftwo
+    \expandafter\@firstoftwo
   \else
-  \expandafter\@secondoftwo
+    \expandafter\@secondoftwo
   \fi
 }
 
@@ -86,7 +86,7 @@ Sequence Diagrams.]
 % Example:
 % \newinst[edge distance]{var}{name:class}
 \newcommand{\newinst}[3][0.2]{
-  \ifcounter{callselflevel#2}
+  \pgf@umlsd@ifcounter{callselflevel#2}
   {\setcounter{callselflevel#2}{0}}
   {\newcounter{callselflevel#2}}
   \stepcounter{instnum}
@@ -140,7 +140,7 @@ Sequence Diagrams.]
 }
 }
 {
-\ifthenelse{\equal{\f\thecallevel}{\t\thecallevel}}
+\ifthenelse{\equal{\pgf@umlsd@f@thecallevel}{\pgf@umlsd@t@thecallevel}}
 {
   \end{callself}
 }
@@ -160,17 +160,17 @@ Sequence Diagrams.]
   
   \draw[->,>=triangle 60] ({cf\thecallevel}) -- (ct\thecallevel)
   node[midway, above] {#3};
-  \def\l\thecallevel{#1}
-  \def\f\thecallevel{#2}
-  \def\t\thecallevel{#4}
+  \def\pgf@umlsd@l@thecallevel{#1}
+  \def\pgf@umlsd@f@thecallevel{#2}
+  \def\pgf@umlsd@t@thecallevel{#4}
   \def\returnvalue{#5}
   \tikzstyle{threadstyle}+=[instcolor#2]
 }
 {
-  \addtocounter{seqlevel}{\l\thecallevel}
+  \addtocounter{seqlevel}{\pgf@umlsd@l@thecallevel}
   \path
-  (\f\thecallevel)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (rf\thecallevel) {}
-  (\t\thecallevel.\threadbias)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (rt\thecallevel) {};
+  (\pgf@umlsd@f@thecallevel)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (rf\thecallevel) {}
+  (\pgf@umlsd@t@thecallevel.\threadbias)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (rt\thecallevel) {};
   \draw[dashed,->,>=angle 60] ({rt\thecallevel}) -- (rf\thecallevel)
   node[midway, above]{\returnvalue};
   \drawthread{ct\thecallevel}{rt\thecallevel}
@@ -185,13 +185,13 @@ Sequence Diagrams.]
 \newenvironment*{callself}[4][1]{
   \stepcounter{seqlevel}
   \stepcounter{callevel} % push
-  \def\l\thecallevel{#1}
-  \def\f\thecallevel{#2}
-  \def\t\thecallevel{#2}
-  \stepcounter{callselflevel\f\thecallevel}
+  \def\pgf@umlsd@l@thecallevel{#1}
+  \def\pgf@umlsd@f@thecallevel{#2}
+  \def\pgf@umlsd@t@thecallevel{#2}
+  \stepcounter{callselflevel\pgf@umlsd@f@thecallevel}
 
   \path
-  (#2)+(\arabic{callselflevel\f\thecallevel}*0.1-0.1,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (sc\thecallevel) {}
+  (#2)+(\arabic{callselflevel\pgf@umlsd@f@thecallevel}*0.1-0.1,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (sc\thecallevel) {}
   ({sc\thecallevel}.east)+(0,-0.33*\unitfactor) node (scb\thecallevel) {};
 
   \draw[->,>=triangle 60] ({sc\thecallevel}.east) -- ++(0.8,0)
@@ -200,15 +200,15 @@ Sequence Diagrams.]
   \def\returnvalue{#4}
   \tikzstyle{threadstyle}+=[instcolor#2]
 }{
-  \addtocounter{seqlevel}{\l\thecallevel}
-  \path (\f\thecallevel)+(\arabic{callselflevel\f\thecallevel}*0.1-0.1,-\theseqlevel*\unitfactor-0.33*\unitfactor) node
+  \addtocounter{seqlevel}{\pgf@umlsd@l@thecallevel}
+  \path (\pgf@umlsd@f@thecallevel)+(\arabic{callselflevel\pgf@umlsd@f@thecallevel}*0.1-0.1,-\theseqlevel*\unitfactor-0.33*\unitfactor) node
   (sct\thecallevel) {};
 
   \draw[dashed,->,>=angle 60] ({sct\thecallevel}.east) node
   (sce\thecallevel) {} -- ++(0.8,0) -- node[midway, right]{\returnvalue} ++(0,-0.33*\unitfactor) -- ++(-0.8,0);
   \drawthread{scb\thecallevel}{sce\thecallevel}
   \addtocounter{callevel}{-1} % pop
-  \addtocounter{callselflevel\f\thecallevel}{-1}
+  \addtocounter{callselflevel\pgf@umlsd@f@thecallevel}{-1}
 }
 
 % message between threads
@@ -238,20 +238,20 @@ Sequence Diagrams.]
 \newcommand*{\messself}[3][1]{
   \stepcounter{seqlevel}
   \stepcounter{callevel} % push
-  \def\l\thecallevel{#1}
-  \def\f\thecallevel{#2}
-  \stepcounter{callselflevel\f\thecallevel}
+  \def\pgf@umlsd@l@thecallevel{#1}
+  \def\pgf@umlsd@f@thecallevel{#2}
+  \stepcounter{callselflevel\pgf@umlsd@f@thecallevel}
   \path
-(\f\thecallevel)+(\arabic{callselflevel\f\thecallevel}*0.1-0.1,-\theseqlevel*\unitfactor-0.33*\unitfactor)
+(\pgf@umlsd@f@thecallevel)+(\arabic{callselflevel\pgf@umlsd@f@thecallevel}*0.1-0.1,-\theseqlevel*\unitfactor-0.33*\unitfactor)
 node
   (sct\thecallevel) {};
-  \addtocounter{seqlevel}{\l\thecallevel}
+  \addtocounter{seqlevel}{\pgf@umlsd@l@thecallevel}
   \draw[->,>=angle 60] ({sct\thecallevel}.east) node
   (sce\thecallevel) {} -- ++(0.8,0) -- node[midway, right]{#3}
-++(0,-\l\thecallevel*\unitfactor) -- ++(-0.8,0);
+++(0,-\pgf@umlsd@l@thecallevel*\unitfactor) -- ++(-0.8,0);
 
   \addtocounter{callevel}{-1} % pop
-  \addtocounter{callselflevel\f\thecallevel}{-1}
+  \addtocounter{callselflevel\pgf@umlsd@f@thecallevel}{-1}
 }
 
 % message between threads
@@ -279,16 +279,16 @@ node
   
   \draw[->,>=angle 60] ({cf\thecallevel}) -- (ct\thecallevel)
   node[midway, above] {#3};
-  \def\l\thecallevel{#1}
-  \def\f\thecallevel{#2}
-  \def\t\thecallevel{#4}
+  \def\pgf@umlsd@l@thecallevel{#1}
+  \def\pgf@umlsd@f@thecallevel{#2}
+  \def\pgf@umlsd@t@thecallevel{#4}
   \tikzstyle{threadstyle}+=[instcolor#2]
 }
 {
-  \addtocounter{seqlevel}{\l\thecallevel}
+  \addtocounter{seqlevel}{\pgf@umlsd@l@thecallevel}
   \path
-  (\f\thecallevel)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (rf\thecallevel) {}
-  (\t\thecallevel.\threadbias)+(0,-\theseqlevel*\unitfactor-0.3*\unitfactor) node (rt\thecallevel) {};
+  (\pgf@umlsd@f@thecallevel)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (rf\thecallevel) {}
+  (\pgf@umlsd@t@thecallevel.\threadbias)+(0,-\theseqlevel*\unitfactor-0.3*\unitfactor) node (rt\thecallevel) {};
   \drawthread{ct\thecallevel}{rt\thecallevel}
   \addtocounter{callevel}{-1} % pop
 }
