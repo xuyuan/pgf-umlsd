@@ -1,0 +1,66 @@
+language: generic
+os: linux
+
+install:
+- cd ci/
+- source texlive.sh
+- cd ..
+
+cache:
+  directories:
+  - /tmp/texlive
+  - $HOME/.texlive
+  - /tmp/tlpkg
+
+addons:
+  apt:
+    packages:
+    - ghostscript
+    - realpath
+
+before_script:
+- git fetch --unshallow --tags || true
+
+script: |
+  set -e
+  cd doc/latex/pgf-umlsd
+  while : ; do
+    $engine -shell-escape -halt-on-error -interaction=nonstopmode pgf-umlsd-manual.tex
+    grep -q -E "(There were undefined references|Rerun to get (cross-references|the bars) right)" *.log || break
+    [ "$(( thisrun=$(( thisrun + 1 )) ))" -lt 5 ] || { echo "Reruns exceeded"; exit 1; }
+  done
+  if [ "$engine" = "latex" ]; then
+      dvips pgf-umlsd-manual.dvi
+      ps2pdf pgf-umlsd-manual.ps
+  fi
+  cd -
+
+after_success: |
+  git ls-files | sed '/^\./d;/^ci/d' | tee FILES
+  echo doc/latex/pgf-umlsd/pgf-umlsd-manual.pdf | tee -a FILES
+  tar --xform='s$\(doc\|tex\)/latex/pgf-umlsd/$$g' \
+      --xform='s$^$pgf-umlsd/$g' \
+      -cvf pgf-umlsd.tar.gz $(cat FILES)
+
+jobs:
+  include:
+  - env: engine=lualatex
+
+  - env: engine=pdflatex
+
+  - env: engine=xelatex
+
+  - env: engine=latex
+
+deploy:
+  provider: releases
+  token: $GH_TOKEN
+  file_glob: true
+  file:
+  - "*.zip"
+  - "doc/latex/pgf-umlsd/pgf-umlsd-manual.pdf"
+  skip_cleanup: true
+  overwrite: true
+  on:
+    tags: true
+    condition: $engine = lualatex
