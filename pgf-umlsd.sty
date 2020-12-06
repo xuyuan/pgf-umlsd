@@ -39,6 +39,7 @@
 \ProvidesPackage{pgf-umlsd}[2011/07/27 v0.6 Some LaTeX macros for UML
 Sequence Diagrams.]
 
+\RequirePackage{xparse}
 \RequirePackage{tikz}
 \usetikzlibrary{arrows,shadows}
 
@@ -96,9 +97,9 @@ Sequence Diagrams.]
 
 % new an instance thread
 % Example:
-% \newinst[color]{var}{name}{class}
-\newcommand{\newthread}[3][gray!30]{
-  \newinst{#2}{#3}
+% \newthread[color]{var}{name:class}[edge distance]
+\NewDocumentCommand{\newthread}{O{gray!30}mmO{0.2}}{
+  \newinst[#4]{#2}{#3}
   \stepcounter{threadnum}
   \node[below of=inst\theinstnum,node distance=0.8cm] (thread\thethreadnum) {};
   \tikzstyle{threadcolor\thethreadnum}=[fill=#1]
